@@ -40,12 +40,16 @@
                                 <h3>Services:</h3><br />
                                 <!-- <small>Select only one Service*</small> -->
                                 <v-select v-model="selectedService" :items="allservices" :rules = "servicesRules" label="Select Service" required variant="outlined"></v-select>
-
+                                
                                 <div v-if="selectedService">
-                                    <carrier-services v-if="selectedService === 'Carrier Services'" :carrierServiceOptions="serviceOptions.carrierServiceOptions" @carrierServiceSubmitted="handleCarrierServiceSubmitted" />
-                                    <gps-services v-if="selectedService === 'GPS/ELD Telematics Services'" :gpsServiceOptions="serviceOptions.gpsServiceOptions" @gpsServiceSubmitted="handleGpsrServiceSubmitted" />
-                                    <oms-services v-if="selectedService === 'OMS/ERP/WMS Services'"  :omsServiceOptions="serviceOptions.omsServiceOptions" @omsServiceSubmitted="handleomsServiceSubmitted" />
-                                    <other-services v-if="selectedService === 'Other Services'" :otherServiceOptions="serviceOptions.otherServiceOptions" @otherServiceSubmitted="handleotherServiceSubmitted"/>
+
+                                    <carrier-services v-if="selectedService === 'Carrier Services'" :selectedService="selectedService" :carrierServiceOptions="serviceOptions.carrierServiceOptions" @carrierServiceSubmitted="handleCarrierServiceSubmitted" />
+                                    
+                                    <v-select v-if="selectedService === 'GPS/ELD Telematics Services'" v-model="gpsServices" :items="gpsServiceOptions.gpsServicesOptions" label="GPS/ELD Telematics Services" outlined></v-select>
+                                    
+                                    <v-select v-if="selectedService === 'OMS/ERP/WMS Services'" v-model="omsServices" :items="omsServiceOptions.omsServicesOptions" label="OMS/ERP/WMS Services" multiple outlined ></v-select>
+                                    
+                                    <v-select v-if="selectedService === 'Other Services'" v-model="otherServices" :items="otherServiceOptions.otherServicesOptions" label="Other Services" outlined></v-select>
                                 </div>
 
                                 <br />
@@ -61,7 +65,6 @@
                                 <v-row>
                                     <v-col v-if="selectedService === 'Carrier Services'">
                                         <v-file-input  v-model="carrierStatusList" variant="underlined" accept=".xls,.xlsx,.ods,.csv" label="Carrier Status List" @change="handleFileSelection($event, uploadedFiles)"></v-file-input>
-                                        <!-- <v-snackbar v-model="errorSnackbar" color="error">{{ errorMessage }}</v-snackbar> -->
                                         <small>Kindly provide the carrier status list and also provide the Final or Last status of tracking to stop pulling the tracking updates.</small>
                                         <ul v-if="uploadedFiles.length">
                                             <li v-for="fileName in uploadedFiles" :key="fileName">{{ fileName }}</li>
@@ -98,29 +101,22 @@
 </template>
   
 <script>
-import GpsServices from "../components/GpS.vue";
-import OmserpServices from "../components/OmsServices.vue";
-import OtherServices from "../components/OtherServices.vue";
-import CarrierServices from "../components/CarrierServices.vue";
-
 import data from '../assets/data.json';
-
 
 import * as XLSX from 'xlsx';
 
+import CarrierServices from "../components/CarrierServices.vue";
 
 export default {
+
     components: {
-        GpsServices,
-        OmserpServices,
-        OtherServices,
         CarrierServices
     },
+
     data() {
         return {
             data: null,
             allservices: [],
-
 
             askusecase: null,
             caseRules: [
@@ -152,17 +148,14 @@ export default {
             carrierservices: null,
 
 
-            gpsServiceData: null,
             gpsServiceOptions: [],
             gpsServices: null,
 
 
-            omsServiceData: null,
             omsServiceOptions: [],
             omsServices: null,
 
 
-            otherServiceData: null,
             otherServiceOptions: [],
             otherServices: null,
 
@@ -173,12 +166,8 @@ export default {
 
             doclink: "",
 
-
             uploadedFiles: [],
-
-
-            // carrierStatusListNames: [],
-
+            carrierStatusList:null,
 
             requestfileNames: [],
             requestRules:[
@@ -209,15 +198,10 @@ export default {
 
             submitted: false,
 
-            // formData: [],
-
-            // formSubmitted: false,
-
             file: null,
             errorSnackbar: false,
             errorMessage: "",
 
-            requestFileContent:[],
         };
     },
 
@@ -253,23 +237,12 @@ export default {
             this.otherServiceOptions = null;
         }
 
-
-
         const storedFormData = sessionStorage.getItem('formData');
         if (storedFormData) {
             const formData = JSON.parse(storedFormData);
             Object.assign(this, formData);
         }   
     },
-
-    // mounted() {
-    //     // this.fetchOptions();
-    //     const storedFormData = sessionStorage.getItem('formData');
-    //     if (storedFormData) {
-    //         const formData = JSON.parse(storedFormData);
-    //         Object.assign(this, formData);
-    //     }   
-    // },
 
     methods: {
         logout() {
@@ -281,12 +254,6 @@ export default {
 
             for (let i = 0; i < files.length; i++) {
                 fileNamesArray.push(files[i].name);
-
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const binaryStr = reader.result;
-                };
-                reader.readAsArrayBuffer(files[i]);
             }
             event.target.value = null;
         },
@@ -330,35 +297,8 @@ export default {
             }
         },
 
-        // async fetchOptions() {
-        //     try {
-        //         const response = await axios.get('http://localhost:8080/https://webhook.site/faba92ca-f19e-45bb-ab34-4fd3b753b7c4');
-        //         const { communicationMethods, serviceOptions, allservices} = response.data;
-        //         this.communicationMethods = communicationMethods;
-        //         this.allservices = allservices;
-        //         this.carrierServiceOptions = serviceOptions.carrierServiceOptions;
-        //         this.gpsServiceOptions = serviceOptions.gpsServiceOptions;
-        //         this.omsServiceOptions = serviceOptions.omsServiceOptions;
-        //         this.otherServiceOptions = serviceOptions.otherServiceOptions;
-        //     } catch (error) {
-        //         console.error('Error fetching options:', error);
-        //     }
-        // },
-
         handleCarrierServiceSubmitted(carrierServiceData) {
             this.carrierservices = carrierServiceData;
-        },
-
-        handleotherServiceSubmitted(otherServiceData) {
-            this.otherServices = otherServiceData;
-        },
-
-        handleomsServiceSubmitted(omsServiceData) {
-            this.omsServices = omsServiceData;
-        },
-
-        handleGpsrServiceSubmitted(gpsServiceData) {
-            this.gpsServices = gpsServiceData;
         },
 
         clearForm() {
@@ -398,15 +338,13 @@ export default {
                     otherServices: this.otherServices,
                     gpsServices: this.gpsServices,
                     omsServices: this.omsServices,
-                    carrierStatusList: this.carrierStatusList,
+                    carrierStatusList: this.uploadedFiles,
                     dataexchange: this.dataexchange,
                     doclink: this.doclink,
                     // requestfileNames: this.requestfileNames,
                     // samplefileNames: this.samplefileNames,
                     samplefile:  this.samplefileNames,
                     requestfile : this.requestfileNames,
-
-                    requestFileContent: this.requestFileContent,
                 };
 
                 if (isValid) {
@@ -453,5 +391,13 @@ export default {
 
 .smalltext{
     margin-left: 310px;
+}
+
+.get-slot-label {
+  margin-top: 10px;
+}
+
+.awb-yes {
+  margin-right: 30px;
 }
 </style>

@@ -12,7 +12,7 @@
               </v-row>
               <v-divider class="my-3"></v-divider>
               <v-row v-for="(value, label, index) in formData" :key="label" :style="{ backgroundColor: index % 2 === 0 ? 'rgba(0,0,0,.03)' : 'white' }">
-                <v-col cols="6">{{ label }}</v-col>
+                <v-col cols="6">{{ keyMap[label] || label }}</v-col>
                 <v-col cols="6">{{ value || 'NA' }}</v-col>
               </v-row>
             </v-container>
@@ -28,16 +28,23 @@
 
 <script>
 
+import keyMapData from '../assets/data.json';
+
+
 export default {
   props: ['formData', 'carrierServiceData', 'otherServices', 'omsServices', 'gpsServices'],
 
   data() {
     return {
+
+      keyMap: keyMapData.data.keyMap,
+
       formData: [],
       carrierServiceData: null,
       otherServices: null,
       omsServices: null,
       gpsServices: null,
+
     };
   },
 
@@ -52,41 +59,6 @@ export default {
   computed: {
     tableData() {
       let data = { ...this.formData };
-
-      // Convert binary data to base64 for requestfile
-      if (data.requestfile) {
-        for (let i = 0; i < data.requestfile.length; i++) {
-          let file = data.requestfile[i];
-          let reader = new FileReader();
-
-          reader.onload = (event) => {
-            let base64Data = event.target.result;
-
-            // Add base64Data to the tableData object
-            data[`Request File ${i + 1}`] = base64Data;
-          };
-
-          reader.readAsDataURL(file);
-        }
-      }
-
-      // Convert binary data to base64 for samplefile
-      if (data.samplefile) {
-        for (let i = 0; i < data.samplefile.length; i++) {
-          let file = data.samplefile[i];
-          let reader = new FileReader();
-
-          reader.onload = (event) => {
-            let base64Data = event.target.result;
-
-            // Add base64Data to the tableData object
-            data[`Sample File ${i + 1}`] = base64Data;
-          };
-
-          reader.readAsDataURL(file);
-        }
-      }
-
       return data;
     }
   },
@@ -103,9 +75,6 @@ export default {
     goBack() {
       this.$router.push({
         name: 'form',
-        // query: {
-        //     formData: JSON.stringify(this.formData), // Pass form data back to form component
-        // }
       }); 
     }
   }

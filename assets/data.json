@@ -52,6 +52,22 @@
                     "Process Search API"
                 ]
             }
+        },
+        "keyMap": {
+            "askusecase": "Ask/Use Case",
+            "communicationmethod": "Communication Method",
+            "systemname": "System/ERP Name",
+            "selectedService": "Selected Service",
+            "carrierservices": "Carrier Services",
+            "otherServices": "Other Services",
+            "gpsServices": "GPS/ELD Telematics Services",
+            "omsServices": "OMS/ERP/WMS Services",
+            "carrierStatusList": "Carrier Status List",
+            "dataexchange": "Data Exchange Format",
+            "doclink": "Documentation Link",
+            "samplefile": "Sample Response Body/Payload",
+            "requestfile": "Request Body/Payload",
+            "requestFileContent": "Request File Content"
         }
     }
 }
