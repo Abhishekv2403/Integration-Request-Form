@@ -1,0 +1,57 @@
+{    
+    "data":{
+        "communicationMethods": [
+            "API",
+            "SFTP",
+            "FTP",
+            "S3",
+            "EDI",
+            "FTPS"
+        ],
+
+        "allservices":[
+        "Carrier Services",
+        "GPS/ELD Telematics Services",
+        "OMS/ERP/WMS Services",
+        "Other Services"
+        ],
+        
+        "serviceOptions": {
+            "carrierServiceOptions": {
+                "labelAndAWBOrderOptions": [
+                    "Forward",
+                    "Reverse",
+                    "Forward/Reverse",
+                    "DropOff"
+                ],
+                "trackingEventsOptions": [
+                    "Tracking Pull",
+                    "Webhook"
+                ]
+            },
+            "gpsServiceOptions": {
+                "gpsServicesOptions": [
+                    "Push",
+                    "Pull"
+                ]
+            },
+            "omsServiceOptions": {
+                "omsServicesOptions": [
+                    "Create Order",
+                    "Update Order",
+                    "Cancel Order",
+                    "Order/Shipment Status",
+                    "Create Shipment With Stop Level Details",
+                    "Cancel Shipment With Stop Level Details"
+                ]
+            },
+            "otherServiceOptions": {
+                "otherServicesOptions": [
+                    "Send SMS",
+                    "Shorten URL",
+                    "Process Search API"
+                ]
+            }
+        }
+    }
+}

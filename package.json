@@ -1,0 +1,38 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@firebase/auth": "^1.6.1",
+    "@mdi/font": "^7.4.47",
+    "@mdi/js": "^7.4.47",
+    "@nuxt/kit": "^3.10.3",
+    "@nuxtjs/proxy": "^2.1.0",
+    "@nuxtjs/vuetify": "^1.12.3",
+    "axios": "^1.6.7",
+    "cors-anywhere": "^0.4.4",
+    "exceljs": "^4.4.0",
+    "firebase": "^10.8.1",
+    "git": "^0.1.5",
+    "nuxt": "^3.10.2",
+    "sass": "^1.71.0",
+    "vee-validate": "^4.12.5",
+    "vite-plugin-vuetify": "^2.0.1",
+    "vue": "^3.4.19",
+    "vue-google-oauth2": "^1.5.10",
+    "vue-router": "^4.2.5",
+    "vuetify": "^3.5.6",
+    "xlsx": "^0.18.5"
+  },
+  "funding": {
+    "type": "sponsor",
+    "url": "https://github.com/sponsors/firebase"
+  }
+}
