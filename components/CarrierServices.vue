@@ -1,27 +1,27 @@
 <template>
   <div v-if="selectedService === 'Carrier Services'">
-    <v-select v-model="labelAndAWBOrder" :items="carrierServiceOptions.labelAndAWBOrderOptions" label="Generate Label & AWB/Order" outlined></v-select>
-    <v-select v-model="trackingEvents" :items="carrierServiceOptions.trackingEventsOptions" label="Tracking Events" outlined></v-select>
+    <v-select v-model="labelAndAWBOrder" :rules="labelRules" :items="carrierServiceOptions.labelAndAWBOrderOptions" label="Generate Label & AWB/Order" outlined></v-select>
+    <v-select v-model="trackingEvents" :rules="trackRules" :items="carrierServiceOptions.trackingEventsOptions" label="Tracking Events" outlined></v-select>
   
-    <v-radio-group v-model="cancelawb" inline>
+    <v-radio-group v-model="cancelawb" :rules="cancelRules" inline>
       <span class="get-slot-label">Cancel AWB :</span>
       <v-radio class="awb-yes" label="Yes" value="yes"></v-radio>
       <v-radio label="No" value="no"></v-radio>
     </v-radio-group>
   
-    <v-radio-group v-model="getquote" inline>
+    <v-radio-group v-model="getquote" :rules="quoteRules" inline>
       <span class="get-slot-label">Get quote :</span>
       <v-radio label="Yes" value="yes"></v-radio>
       <v-radio label="No" value="no"></v-radio>
     </v-radio-group>
   
-    <v-radio-group v-model="getslot" inline>
+    <v-radio-group v-model="getslot" :rules="slotRules" inline>
       <span class="get-slot-label">Get Slot :</span>
       <v-radio label="Yes" value="yes"></v-radio>
       <v-radio label="No" value="no"></v-radio>
     </v-radio-group>
   
-    <v-radio-group v-model="confirmslot" inline > 
+    <v-radio-group v-model="confirmslot" :rules="confirmslotRules" inline > 
       <span class="get-slot-label">Confirm Slot :</span>
       <v-radio label="Yes" value="yes"></v-radio>
       <v-radio label="No" value="no"></v-radio>
@@ -37,11 +37,34 @@ export default {
   data() {
     return {
       labelAndAWBOrder: null,
+      labelRules: [
+        (v) => !!v || 'This field is required',
+      ],
+
       trackingEvents: null,
+      trackRules: [
+        (v) => !!v || 'This field is required',
+      ],
+
       cancelawb: null,
+      cancelRules: [
+        (v) => !!v || 'This field is required',
+      ],
+
       getquote: null,
+      quoteRules: [
+        (v) => !!v || 'This field is required',
+      ],
+
       getslot: null,
+      slotRules: [
+        (v) => !!v || 'This field is required',
+      ],
+
       confirmslot: null,
+      confirmslotRules: [
+        (v) => !!v || 'This field is required',
+      ],
     };
   },
 

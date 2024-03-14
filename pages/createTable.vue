@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col cols="8">
         <v-card class="elevation-12">
-          <v-card-title class="headline headline mb-0 text-center">Description</v-card-title>
+          <v-card-title class="headline headline mb-0 text-center">Create Issue</v-card-title>
           <v-card-text>
             <v-container>
               <v-row>
@@ -11,20 +11,18 @@
                 <v-col cols="6" class="label-col">Notes</v-col>
               </v-row>
               <v-divider class="my-3"></v-divider>
-              <v-row v-for="(value, label, index) in formData" :key="label" :style="{ backgroundColor:index % 2 === 0 ? 'rgba(0,0,0,.03)' : 'white',}">
+              <v-row v-for="(value, label, index) in formData" :key="label" :style="{
+                backgroundColor:
+                  index % 2 === 0 ? 'rgba(0,0,0,.03)' : 'white',
+              }">
                 <v-col cols="6">{{ keyMap[label] || label }}</v-col>
                 <v-col cols="6">{{ value || "NA" }}</v-col>
               </v-row>
-
             </v-container>
 
             <div class="button-container">
-              <v-btn @click="updateJiraIssue">Approve</v-btn>
+              <v-btn @click="updateJiraIssue">Approval Request</v-btn>
               <v-btn @click="goBack" color="primary" dark>Back</v-btn>
-
-              <v-snackbar v-model="snackbar" :timeout="1000" color="success">
-                Issue created
-              </v-snackbar>
             </div>
           </v-card-text>
         </v-card>
@@ -33,23 +31,18 @@
   </v-container>
 </template>
 
-
 <script>
 import keyMapData from "../assets/data.json";
 import axios from "axios";
+import { useToast } from "vue-toastification";
 
 export default {
-  props: ['formData'],
+  props: ["formData"],
 
   data() {
     return {
-      snackbar: false,
-
       keyMap: keyMapData.data.keyMap,
-
       formData: [],
-
-      tableString: "",
     };
   },
 
@@ -63,7 +56,7 @@ export default {
   created() {
     const storedFormData = localStorage.getItem("formData");
     console.log(storedFormData);
-    
+
     if (storedFormData) {
       this.formData = JSON.parse(storedFormData);
     }
@@ -77,26 +70,49 @@ export default {
     },
 
     async updateJiraIssue() {
+      const url1 =
+        "https://api-qa.fareyeconnect.com/connector/v1/formtest/create-domain";
 
-      const url = " https://api-qa.fareyeconnect.com/connector/v1/formtest/test";
+      const url =
+        " https://api-qa.fareyeconnect.com/connector/v1/formtest/test";
 
-      this.$router.push('/action');
-      this.snackbar = true;
-
+      this.$router.push("/action");
 
       try {
-        const response = await axios.post(url, { formData: this.formData }, {
-          headers: {
-            'Authorization': 'Bearer 39e89e75-5f22-4f26-abc8-145592eb3577'
+        const response = await axios.post(
+          url,
+          { formData: this.formData },
+          {
+            headers: {
+              Authorization: "Bearer 39e89e75-5f22-4f26-abc8-145592eb3577",
+            },
           }
-        }); 
+        );
 
+        const response1 = await axios.post(
+          url1,
+          { domainData: this.domainData },
+          {
+            headers: {
+              Authorization: "Bearer 39e89e75-5f22-4f26-abc8-145592eb3577",
+            },
+          }
+        );
 
-        console.log("Response from server:", response); 
-
+        console.log("Response from server:", response);
         console.log("Ticket updated successfully:", response.data);
+
+
+        const issueKey = response.data.issueKey;
+
+        this.$bvToast.toast(`Ticket created successfully. Issue Key: ${issueKey}`, {
+            title: 'Success',
+            autoHideDelay: 5000,
+            appendToast: true,
+            variant: 'success'
+        });
       } catch (error) {
-        console.error("Error updating ticket:", error); 
+        console.error("Error updating ticket:", error);
 
         if (error.response) {
           console.error("Response data:", error.response.data);

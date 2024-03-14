@@ -1,5 +1,12 @@
 {    
     "data":{
+
+        "issueTypes": [
+            "Epic",
+            "Bug",
+            "Story"
+        ],
+
         "communicationMethods": [
             "API",
             "SFTP",

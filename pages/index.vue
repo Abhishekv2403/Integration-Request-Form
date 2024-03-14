@@ -46,9 +46,12 @@ export default {
         const result = await signInWithPopup(auth, provider)
         const user = result.user;
         const uid = user.uid;
+        const email = user.email;
         console.log('User UID:', uid);
-        sessionStorage.removeItem('formData');
-        this.$router.push('/form')
+        console.log('User email:', email);
+        localStorage.setItem('email', JSON.stringify(email));
+        localStorage.removeItem('formData');
+        this.$router.push('/action')
       } catch (error) {
         console.error('Error logging in:', error)
       }
@@ -69,7 +72,7 @@ export default {
     },
 
     logout() {
-      sessionStorage.removeItem('formData');
+      localStorage.removeItem('formData');
       this.$router.push('/');
     },
   }

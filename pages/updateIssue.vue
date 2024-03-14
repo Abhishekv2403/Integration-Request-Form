@@ -6,49 +6,16 @@
                     <v-card-title class="primary white--text" >
                         <v-toolbar class="primary" dark>
                             <h2 class="display-1 font-weight-light white--text">Integration Request Form</h2>
-
-                            <div class="login-wrapper">
-                                <div class="user-info">
-                                    <span>{{ userEmail }}</span>
-                                    <span>{{ userInitial }}</span>
-                                </div>
-                            </div>
-
                             <small class="smalltext white--text">Logout</small>
                             <v-icon @click="logout" class="ml-auto white--text">mdi-logout</v-icon>
                         </v-toolbar>
                     </v-card-title>
 
-                    <v-card-actions v-if="showCardActions">
-                        <v-btn color="primary" @click="createIssue">Create Issue</v-btn>
-                        <v-btn color="success" @click="updateIssue">Update Issue</v-btn>
-                    </v-card-actions>
-
-                    <v-card-text v-if="updateIssueCard || createIssueCard">
+                    <v-card-text >
                         <v-form ref="form" v-model="valid" lazy-validation>
+                            <br>
+                            <h2 >{{ issuekey ? `${issuekey}` : '' }}</h2>
                             <v-container>
-
-                                <v-row v-if="updateIssueCard">
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="issuekey" :rules="issueRules" label="Issue Key" required variant="outlined"></v-text-field>
-                                    </v-col>
-                                </v-row>
-
-                                <v-row v-if="createIssueCard">
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="issuekey" :rules="issueRules" label="Project" required variant="outlined"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-select v-model="issuetype" :rules="issuetypeRules" label="Issue Type" :items="issueTypes" required variant="outlined"></v-select>
-                                    </v-col>
-                                </v-row>
-
-                                <v-row v-if="createIssueCard">
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="summary" :rules="summaryRules" label="Summary" required variant="outlined"></v-text-field>
-                                    </v-col>
-                                </v-row>
-
 
                                 <v-row>
                                     <v-col cols="12" md="6">
@@ -107,7 +74,7 @@
 
                             </v-container>
                             <v-card-actions class="button-container">
-                                <v-btn :disabled="!valid" @click="submitForm" color="primary" dark>Submit</v-btn>
+                                <v-btn :disabled="!valid" @click="submitForm" color="primary" dark>Next</v-btn>
                                 <v-btn @click="clearForm" color="red" dark>Clear</v-btn>
                             </v-card-actions>
                         </v-form>
@@ -136,28 +103,16 @@ export default {
             data: null,
             allservices: [],
 
-            updateIssueCard: false,
-            createIssueCard : false,
-            showCardActions: true,
-
             summary: null,
             summaryRules: [
                 (v) => !!v || 'Summary is required',
             ],
 
 
-            issuekey: "INT",
+            issuekey: "",
             issueRules: [
                 (v) => !!v || 'Issue Key is required',
             ],
-
-
-            issuetype : null,
-            issueTypes: [],
-            issuetypeRules: [
-                (v) => !!v || 'Issue Type is required',
-            ],
-
 
 
             askusecase: null,
@@ -302,6 +257,10 @@ export default {
             this.otherServiceOptions = null;
         }
 
+
+        this.issuekey = this.$route.query.issueKey;
+        console.log(this.issuekey); 
+
         const storedFormData = localStorage.getItem('formData');
         if (storedFormData) {
             const formData = JSON.parse(storedFormData);
@@ -310,22 +269,6 @@ export default {
     },
 
     methods: {
-
-        updateIssue() {
-            console.log('update issue called')
-            this.createissueCard = false;
-            this.updateIssueCard = true;
-            this.showCardActions = false;
-            localStorage.removeItem('formData');
-        },
-
-        createIssue() {
-            console.log('create issue called')
-            this.createIssueCard = true;
-            this.updateIssueCard = false;
-            this.showCardActions = false;
-            localStorage.removeItem('formData');
-        },
 
         logout() {
             localStorage.removeItem('formData');
@@ -416,13 +359,6 @@ export default {
                 const formData = {
                     issuekey: (this.issuekey === null || this.issuekey === undefined) ? "NA" : this.issuekey,
 
-                    issuetype : this.issuetype,
-                    issuetype: (this.issuetype === null || this.issuetype === undefined) ? "NA" : this.issuetype,
-
-
-                    summary : this.summary,
-                    summary: (this.summary === null || this.summary === undefined) ? "NA" : this.summary,
-
                     askusecase: this.askusecase,
                     communicationmethod: this.communicationmethod,
                     systemname: this.systemname,
@@ -450,7 +386,7 @@ export default {
                     console.log(this.requestfile);
 
                     this.$router.push({
-                        name: 'table',
+                        name: 'updateTable',
                     });
                 }else {
                     console.log("Validation failed");
