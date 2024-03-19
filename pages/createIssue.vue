@@ -81,7 +81,65 @@
                                     </v-col>
                                 </v-row>
 
+                                <v-divider></v-divider>
+
+                            <div v-if="selectedService">
+                                <br>
+                                <h3>Info:</h3><br />
+
+
+
+                                <v-row>
+                                    <v-col cols="6" md="4">
+                                        <v-select v-model="status" :rules="caseRules" :items="statusOptions" label="Select Status" required variant="underlined"></v-select>
+                                    </v-col>
+                                    <v-col cols="6" md="4">
+                                        <v-select v-model="label" :rules="caseRules" :items="labelOptions" label="Label" required variant="underlined"></v-select>
+                                    </v-col>
+                                    <v-col cols="6" md="4">
+                                        <v-select v-model="modality" :rules="caseRules" :items="modalityOptions" label="Modality"  required multiple variant="underlined"></v-select>
+                                    </v-col>
+                                </v-row>
+
+                                <v-row>
+                                    <v-col cols="6" md="4">
+                                        <v-select v-model="feature" :rules="caseRules" required :items="featureOptions" label="Feature" variant="underlined"></v-select>
+                                    </v-col>
+                                    <v-col cols="6" md="4">
+
+                                        <!-- <v-autocomplete v-model="form.selectedCountry" :return-object="true" item-value="id" v-bind="attrs" item-text="name" :rules="caseRules" required :items="countries" label="Select Country" variant="underlined"> -->
+                                        
+                                        
+                                        <!-- </v-autocomplete> -->
+
+                                        <v-select v-model="selectedCountry" :rules="caseRules" required :items="countries" label="Select Country" variant="underlined"></v-select>
+                         
+                                        <!-- <v-select v-model="country" :items="countries.map(country => country.name) & countries.map(country => country.id)" label="Select Country" variant="underlined"></v-select> -->
+                                    </v-col>
+                                    <v-col cols="6" md="4">
+                                        <v-text-field v-model="final_status" :rules="caseRules" label="Final Status" required variant="underlined"></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                
+                                
+                                <v-row>
+                                    <v-col cols="6" md="4">
+                                        <v-text-field v-model="contact_person" class = " contact" :rules="caseRules" label="Contact Person" required variant="underlined"></v-text-field>
+                                    </v-col>
+                                    <v-col cols="6" md="4">
+                                        <v-text-field v-model="courier_email" :rules="caseRules" label="Courier Email" required variant="underlined"></v-text-field>
+                                    </v-col>
+                                    <v-col cols="6" md="4">
+                                        <v-file-input  v-model="logo" variant="underlined" :rules = "sampleRules" required accept=".jpg,.png,.img" label="Logo" @change="handleFileUpload($event, logofile)"></v-file-input>
+                                    </v-col>
+                                </v-row>
+
+
+
+                            </div>
+
                             </v-container>
+
                             <v-card-actions class="button-container">
                                 <v-btn :disabled="!valid" @click="submitForm" color="primary" dark>Next</v-btn>
                                 <v-btn @click="clearForm" color="red" dark>Clear</v-btn>
@@ -96,6 +154,8 @@
   
 <script>
 import data from '../assets/data.json';
+import axios from "axios";
+
 
 import * as XLSX from 'xlsx';
 
@@ -112,7 +172,26 @@ export default {
     data() {
         return {
 
+            selectedCountry:null,
+
             email: [],
+            countryData: [],
+            countries:[],
+            countryid:null,
+
+            contact_person:null,
+
+            courier_email:null,
+            final_status:null,
+
+
+
+            status :"Development",
+            label : "Setu",
+            modality : [],
+            logo: [],
+            logofile: [],
+            feature : null,
 
 
             data: null,
@@ -137,7 +216,7 @@ export default {
 
             askusecase: null,
             caseRules: [
-                (v) => !!v || 'Ask/Use Case is required',
+                (v) => !!v || 'This field is required',
             ],
 
 
@@ -243,6 +322,13 @@ export default {
     },
 
     watch: {
+
+        selectedCountry(newCountry) {
+            console.log(newCountry);
+            this.updateCountryId(newCountry);
+        },
+
+
         communicationmethod(newVal) {
             if (newVal === 'API') {
                 this.dataExchangeOptions = ['JSON', 'XML'];
@@ -252,11 +338,17 @@ export default {
                 this.dataExchangeOptions = ['CSV', 'XML', 'JSON', 'XLS', 'XLSX'];
             }
         }
-    },
+    },  
 
     async mounted() {
+
         try {
             this.data = data.data;
+
+            this.statusOptions = this.data.statusOptions;
+            this.labelOptions = this.data.labelOptions;
+            this.modalityOptions = this.data.modalityOptions;
+            this.featureOptions = this.data.featureOptions;
             this.allservices = this.data.allservices;
             this.issueTypes = this.data.issueTypes;
             this.communicationMethods = this.data.communicationMethods;
@@ -290,9 +382,61 @@ export default {
         if (storedemail) {
             this.email = JSON.parse(storedemail);
         }
+
+        this.fetchCountries();
+
     },
 
     methods: {
+
+        async fetchCountries() {
+
+            try {
+                const response = await axios.post( "https://api-qa.fareyeconnect.com/connector/v1/formtest/get-country", {},  {
+                    headers: {
+                        'Authorization': 'Bearer 39e89e75-5f22-4f26-abc8-145592eb3577'
+                    }
+                });
+
+                this.countryData = response.data.countrydata.content;
+                console.log(this.countryData)
+                this.countries = this.countryData.map(country => country.name);
+                // this.country_ids = this.countryData.map(country => country.id);
+                // console.log(this.country_ids);
+                
+                
+                // this.countries = response.data.countrydata.content.map(country => ({
+                //     id: country.id,
+                //     name: country.name
+                // }));
+                
+                console.log(this.countries);
+
+
+            } catch (error) {
+                console.error("Error fetching countries:", error);
+            }
+        },
+
+
+        updateCountryId(countryName) {
+            console.log("working")
+            this.countryid = this.getCountryId(countryName);
+            console.log('Selected Country ID:', this.countryid);
+        },
+
+
+        getCountryId(countryName) {
+            console.log("running")
+            let countryId = null;
+            for (const country of this.countryData) {
+                if (country.name === countryName) {
+                    countryId = country.id;
+                    break;
+                }
+            }
+            return countryId;
+        },
 
         logout() {
             localStorage.removeItem('formData');
@@ -350,7 +494,7 @@ export default {
         },
 
         clearForm() {
-            this.issuekey = null;
+            this.issuekey = "INT";
             this.issuetype = null;
             this.summary = null;
             this.askusecase = null;
@@ -379,6 +523,24 @@ export default {
                     console.log("Form submitted");
                     this.submitted = true;
                 }
+
+
+                const domainData = {
+                    code : this.systemname,
+                    name : this.systemname,
+                    contact_person : this.contact_person,
+                    courier_email : this.courier_email,
+                    final_status : this.final_status,
+                    feature : this.feature,
+                    // page : this.page,
+                    logo : this.logofile,
+                    label : this.label,
+                    modality : this.modality,
+                    status : this.status,
+                    domain : (this.selectedService === "Carrier Services")? "CARRIER" : (this.selectedService === "GPS/ELD Telematics Services") ? "GPS" : (this.selectedService === "OMS/ERP/WMS Services") ? "OMS" : "SMS",
+                    country_name : this.selectedCountry,
+                    country_id : this.countryid
+                };
 
                 const formData = {
                     issuekey: this.issuekey,
@@ -420,9 +582,12 @@ export default {
 
                 if (isValid) {
                     localStorage.setItem('formData', JSON.stringify(formData));
+                    localStorage.setItem('domainData', JSON.stringify(domainData));
+
                     console.log(formData);
-                    console.log(this.samplefile);
-                    console.log(this.requestfile);
+                    console.log(domainData);
+                    // console.log(this.samplefile);
+                    // console.log(this.requestfile);
 
                     this.$router.push({
                         name: 'createTable',
@@ -476,4 +641,9 @@ export default {
 .awb-yes {
   margin-right: 30px;
 }
+
+
+/* .contact{
+    margin-left: 100px;
+} */
 </style>

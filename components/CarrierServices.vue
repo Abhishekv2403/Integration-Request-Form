@@ -71,12 +71,32 @@ export default {
   methods: {
     carrierServiceSubmitted() {
       const carrierServiceData = {
-        labelAndAWBOrder: this.labelAndAWBOrder,
-        trackingEvents: this.trackingEvents,
-        cancelawb: this.cancelawb,
-        getquote: this.getquote,
-        getslot: this.getslot,
-        confirmslot: this.confirmslot,
+
+
+        labelAndAWBOrder: (this.labelAndAWBOrder === null || this.labelAndAWBOrder === undefined) ? "NA" : this.labelAndAWBOrder,
+
+        // labelAndAWBOrder: this.labelAndAWBOrder,
+
+        trackingEvents: (this.trackingEvents === null || this.trackingEvents === undefined) ? "NA" : this.trackingEvents,
+
+        // trackingEvents: this.trackingEvents,
+
+        cancelawb: (this.cancelawb === null || this.cancelawb === undefined) ? "NA" : this.cancelawb,
+
+        // cancelawb: this.cancelawb,
+
+        getquote: (this.getquote === null || this.getquote === undefined) ? "NA" : this.getquote,
+
+        // getquote: this.getquote,
+
+        getslot: (this.getslot === null || this.getslot === undefined) ? "NA" : this.getslot,
+
+        // getslot: this.getslot,
+
+
+        confirmslot: (this.confirmslot === null || this.confirmslot === undefined) ? "NA" : this.confirmslot,
+
+        // confirmslot: this.confirmslot,
       };
       this.$emit('carrierServiceSubmitted', carrierServiceData);
       this.dialog = false;

@@ -1,9 +1,19 @@
 <template>
   <v-container>
+
+    <v-alert v-model="successAlert" icon="$success" text={{ this.issueKey }} title="Issue Created Successfully" type="success"></v-alert>
+    <v-alert v-model="successdomainAlert" icon="$success" text={{ this.issueKey }} title="Domain Object Created Successfully" type="success"></v-alert>
+
+    <v-alert v-model="failedAlert" text="Failed" density="compact" title="Error" type="warning"></v-alert>
+    <v-alert v-model="faileddomainAlert" text="Failed" density="compact" title="Error" type="warning"></v-alert>
+
+
     <v-row justify="center">
       <v-col cols="8">
         <v-card class="elevation-12">
-          <v-card-title class="headline headline mb-0 text-center">Create Issue</v-card-title>
+          <v-card-title class="headline headline mb-0 text-center"
+            >Create Issue</v-card-title
+          >
           <v-card-text>
             <v-container>
               <v-row>
@@ -11,17 +21,21 @@
                 <v-col cols="6" class="label-col">Notes</v-col>
               </v-row>
               <v-divider class="my-3"></v-divider>
-              <v-row v-for="(value, label, index) in formData" :key="label" :style="{
-                backgroundColor:
-                  index % 2 === 0 ? 'rgba(0,0,0,.03)' : 'white',
-              }">
+              <v-row
+                v-for="(value, label, index) in formData"
+                :key="label"
+                :style="{
+                  backgroundColor:
+                    index % 2 === 0 ? 'rgba(0,0,0,.03)' : 'white',
+                }"
+              >
                 <v-col cols="6">{{ keyMap[label] || label }}</v-col>
                 <v-col cols="6">{{ value || "NA" }}</v-col>
               </v-row>
             </v-container>
 
             <div class="button-container">
-              <v-btn @click="updateJiraIssue">Approval Request</v-btn>
+              <v-btn @click="updateJiraIssue">Done</v-btn>
               <v-btn @click="goBack" color="primary" dark>Back</v-btn>
             </div>
           </v-card-text>
@@ -34,15 +48,21 @@
 <script>
 import keyMapData from "../assets/data.json";
 import axios from "axios";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
 
 export default {
-  props: ["formData"],
+  props: ["formData", "domainData"],
 
   data() {
     return {
       keyMap: keyMapData.data.keyMap,
+      successAlert : false,
+      failedAlert : false,
+      successdomainAlert : false,
+      faileddomainAlert : false,
+      issueKey : null,
       formData: [],
+      domainData: [],
     };
   },
 
@@ -57,8 +77,15 @@ export default {
     const storedFormData = localStorage.getItem("formData");
     console.log(storedFormData);
 
+    const storeddomainData = localStorage.getItem("domainData");
+    console.log(storeddomainData);
+
     if (storedFormData) {
       this.formData = JSON.parse(storedFormData);
+    }
+
+    if (storeddomainData) {
+      this.domainData = JSON.parse(storeddomainData);
     }
   },
 
@@ -69,55 +96,54 @@ export default {
       });
     },
 
+
     async updateJiraIssue() {
-      const url1 =
-        "https://api-qa.fareyeconnect.com/connector/v1/formtest/create-domain";
+      const url1 = "https://api-qa.fareyeconnect.com/connector/v1/formtest/create-domain";
 
-      const url =
-        " https://api-qa.fareyeconnect.com/connector/v1/formtest/test";
+      const url = "https://api-qa.fareyeconnect.com/connector/v1/formtest/test";
 
-      this.$router.push("/action");
-
-      try {
-        const response = await axios.post(
-          url,
-          { formData: this.formData },
-          {
-            headers: {
-              Authorization: "Bearer 39e89e75-5f22-4f26-abc8-145592eb3577",
-            },
-          }
-        );
-
-        const response1 = await axios.post(
-          url1,
-          { domainData: this.domainData },
-          {
-            headers: {
-              Authorization: "Bearer 39e89e75-5f22-4f26-abc8-145592eb3577",
-            },
-          }
-        );
-
-        console.log("Response from server:", response);
-        console.log("Ticket updated successfully:", response.data);
-
-
-        const issueKey = response.data.issueKey;
-
-        this.$bvToast.toast(`Ticket created successfully. Issue Key: ${issueKey}`, {
-            title: 'Success',
-            autoHideDelay: 5000,
-            appendToast: true,
-            variant: 'success'
+        
+        const response = await axios.post( url, { formData: this.formData }, {
+          headers: {
+            Authorization: "Bearer 39e89e75-5f22-4f26-abc8-145592eb3577",
+          },
         });
-      } catch (error) {
-        console.error("Error updating ticket:", error);
 
-        if (error.response) {
-          console.error("Response data:", error.response.data);
+        if (response.status === 200) {
+          console.log("Jira issue created successfully!");
+          this.successAlert=true;
+        } else {
+          console.error("Error:", response.data.error);
+          this.failedAlert = true;
         }
-      }
+        
+        console.log("Response from server:", response);
+        // console.log(this.formData)
+        // console.log(this.domainData);
+              
+        const response1 = await axios.post( url1, { domainData: this.domainData }, {
+          headers: {
+            Authorization: "Bearer 39e89e75-5f22-4f26-abc8-145592eb3577",
+          },
+        });
+        
+        console.log("Response from server:", response1);
+                
+        console.log("Ticket updated successfully:", response.data);
+                
+        this.issueKey = response.data.key;
+        console.log(this.issueKey);
+
+
+        if (response.status === 200) {
+          console.log("Domain Object created successfully!");
+          this.successdomainAlert=true;
+        } else {
+          console.error("Error:", response.data.error);
+          this.faileddomainAlert = true;
+        }
+
+        this.$router.push("/action");
     },
   },
 };

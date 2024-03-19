@@ -7,19 +7,23 @@
                         <h3 class="headline mb-0">Integration Request Form</h3>
                     </v-card-title>
                     <v-card-title>
-                        <span class="headline">All Issues</span>
                     </v-card-title>
                     <v-card-text>
-                        <v-list dense>
-                            <v-list-item v-for="(issue, index) in issues" :key="index">
-                                <v-list-item-content>
-                                    <v-list-item-title>
-                                        {{ issue.fields.summary }}
-                                        <v-btn class="custom-btn" @click="updateIssue(issue.key)">Update</v-btn>
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
+
+                        <v-row>
+                            <v-col cols="2" class="label-col">Issue Key</v-col>
+                            <v-col cols="6" class="label-col">Summary</v-col>
+                        </v-row>
+                        <v-divider class="my-3"></v-divider>
+
+
+
+                        <v-row v-for="(issue, index) in issues" :key="index">
+                            <v-col cols="2">{{ issue.key }}</v-col>
+                            <v-col cols="6">"{{ issue.fields.summary }}"</v-col>
+                            <v-col cols="3"><v-btn class ="custom-btn" variant="tonal" @click="updateIssue(issue.key)">Update Issue</v-btn></v-col>
+                        </v-row>
+
                         <v-btn color="green" @click="createNewIssue">Create New Issue</v-btn>
                     </v-card-text>
                 </v-card>
@@ -63,8 +67,23 @@ export default {
                         'Authorization': 'Bearer 39e89e75-5f22-4f26-abc8-145592eb3577'
                     }
                 });
+
+
+                const jsonData = response.data;
+
+                const issueKeys = jsonData['issues-Keysad'];
+                const issueSummary = jsonData['issues-Summaryy'];
+
+
+                this.issues = issueKeys.map((issueKey, index) => ({
+                    key: issueKey,
+                    fields: {
+                        summary: issueSummary[index]
+                    }
+                }));   
+                
                 console.log("Response from server:", response);
-                this.issues = response.data['issues-Keysad'].map(issueKey => ({ key: issueKey, fields: { summary: issueKey } }));
+
             } catch (error) {
                 console.error('Error fetching user issues:', error);
             }
@@ -94,6 +113,6 @@ export default {
 .custom-btn {
   background-color: rgb(28, 151, 192);
   color: rgb(255, 255, 255);
-  margin-left: 340px;
+
 }
 </style>

@@ -65,10 +65,10 @@
 
                                 <v-row>
                                     <v-col cols="12" md="6">
-                                        <v-file-input v-model="requestfile" label="Request Body/Payload" :rules="requestRules" variant="underlined" required multiple @change="handleFileUpload($event, requestfiles)"></v-file-input>
+                                        <v-file-input v-model="requestfile" label="Request Body/Payload" :rules="requestRules" variant="underlined" required multiple @change="handleFileUpload($event, 'requestfiles')"></v-file-input>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-file-input v-model="samplefile" label="Sample Response Body/Payload" variant="underlined" :rules = "sampleRules" required multiple @change="handleFileUpload($event, samplefiles)"></v-file-input>
+                                        <v-file-input v-model="samplefile" label="Sample Response Body/Payload" variant="underlined" :rules = "sampleRules" required multiple @change="handleFileUpload($event, 'samplefiles')"></v-file-input>
                                     </v-col>
                                 </v-row>
 
@@ -92,6 +92,9 @@ import * as XLSX from 'xlsx';
 
 import CarrierServices from "../components/CarrierServices.vue";
 
+import axios from 'axios';
+
+
 export default {
 
     components: {
@@ -108,6 +111,8 @@ export default {
                 (v) => !!v || 'Summary is required',
             ],
 
+
+            IssueKey: "",
 
             issuekey: "",
             issueRules: [
@@ -234,7 +239,10 @@ export default {
         }
     },
 
+
     async mounted() {
+
+        
         try {
             this.data = data.data;
             this.allservices = this.data.allservices;
@@ -256,19 +264,60 @@ export default {
             this.omsServiceOptions = null;
             this.otherServiceOptions = null;
         }
-
-
+        
+        
         this.issuekey = this.$route.query.issueKey;
         console.log(this.issuekey); 
 
+        this.IssueKey = this.issuekey;
+        console.log(this.IssueKey);
+        
         const storedFormData = localStorage.getItem('formData');
         if (storedFormData) {
             const formData = JSON.parse(storedFormData);
             Object.assign(this, formData);
         }   
+
+        await this.fetchIssuesDetails();
     },
 
     methods: {
+
+        async fetchIssuesDetails() {
+            const url = "https://api-qa.fareyeconnect.com/connector/v1/formtest/get-issue-details";
+            try {
+                const response = await axios.post(url,  {IssueKey :this.IssueKey}, {
+                    headers: {
+                        'Authorization': 'Bearer 39e89e75-5f22-4f26-abc8-145592eb3577'
+                    }
+                }); 
+
+                const jsonData = response.data;
+                this.askusecase = jsonData.askusecase;
+                this.communicationmethod = jsonData.communicationmethod;
+                this.systemname = jsonData.systemname;
+                this.dataexchange = jsonData.dataexchange;
+                this.doclink = jsonData.doclink;
+                this.requestfiles = jsonData.requestfile;
+                this.samplefiles = jsonData.samplefile;
+                
+                // this.selectedService = jsonData.selectedService;
+
+
+                this.otherServices = (jsonData.otherservices === "NA") ? null : jsonData.otherServices,
+
+
+                this.carrierservices = jsonData.carrierservices;
+                this.gpsServices = jsonData.gpsservices;
+                this.omsServices = jsonData.omsservices;
+                // this.otherServices = jsonData.otherservices;
+                
+                console.log("Response from server:", response);
+
+            } catch (error) {
+                console.error('Error fetching user issues:', error);
+            }
+        },
 
         logout() {
             localStorage.removeItem('formData');
