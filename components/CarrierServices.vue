@@ -36,32 +36,32 @@ export default {
 
   data() {
     return {
-      labelAndAWBOrder: null,
+      labelAndAWBOrder: "",
       labelRules: [
         (v) => !!v || 'This field is required',
       ],
 
-      trackingEvents: null,
+      trackingEvents: "",
       trackRules: [
         (v) => !!v || 'This field is required',
       ],
 
-      cancelawb: null,
+      cancelawb: "",
       cancelRules: [
         (v) => !!v || 'This field is required',
       ],
 
-      getquote: null,
+      getquote: "",
       quoteRules: [
         (v) => !!v || 'This field is required',
       ],
 
-      getslot: null,
+      getslot: "",
       slotRules: [
         (v) => !!v || 'This field is required',
       ],
 
-      confirmslot: null,
+      confirmslot: "",
       confirmslotRules: [
         (v) => !!v || 'This field is required',
       ],

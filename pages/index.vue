@@ -2,16 +2,13 @@
   <v-container class="py-3">
     <v-row justify="center">
       <v-col cols="12" sm="6" md="6">
-        <v-card class="elevation-2" style="border-radius: 10px;">
+        <v-card class="elevation-2" style="border-radius: 10px ;">
           <v-card-title class="primary white--text" style="border-radius: 10px 10px 0px 0px;">
-            <h3 class="headline mb-0">Integration Request Form</h3>
+            <h3 class="headline mb-0" >Integration Request Form</h3>
           </v-card-title>
           <v-card-text>
             <div class="login-wrapper">
-              <button @click="login" class="login-button">
-                <v-icon left>mdi-google</v-icon>
-                Login with Google
-              </button>
+              <button @click="login" class="login-button"> <v-icon left>mdi-google</v-icon> Login with Google</button>
             </div>
           </v-card-text>
         </v-card>
@@ -49,8 +46,9 @@ export default {
         const email = user.email;
         console.log('User UID:', uid);
         console.log('User email:', email);
-        localStorage.setItem('email', JSON.stringify(email));
         localStorage.removeItem('formData');
+
+        this.$root.email = email
         this.$router.push('/action')
       } catch (error) {
         console.error('Error logging in:', error)
@@ -80,6 +78,11 @@ export default {
 </script>
 
 <style>
+.primary{
+  background-color: #2d4059;
+  color: white;
+}
+
 .login-wrapper {
   display: flex;
   justify-content: center;

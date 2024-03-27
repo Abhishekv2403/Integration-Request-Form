@@ -35,5 +35,8 @@ export default defineNuxtConfig({
     middleware: ['auth'],
   },
 
+  server: {
+    host: '0.0.0.0' 
+  }
 
 });

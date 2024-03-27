@@ -14,67 +14,95 @@
                     <v-card-text >
                         <v-form ref="form" v-model="valid" lazy-validation>
                             <br>
-                            <h2 >{{ issuekey ? `${issuekey}` : '' }}</h2>
+                            <h2 >{{ IssueKey ? `${IssueKey}` : '' }}</h2>
                             <v-container>
 
                                 <v-row>
                                     <v-col cols="12" md="6">
-                                        <v-text-field v-model="askusecase" :rules="caseRules" label="Ask/Use Case" required variant="outlined"></v-text-field>
+                                        <v-text-field v-model="askusecase" :rules="caseRules" label="Ask/Use Case *" required variant="outlined"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-select v-model="communicationmethod" :items="communicationMethods" :rules="communicationMethodRules" label="Select Communication Methods" required variant="outlined"></v-select>
+                                        <v-select v-model="communicationmethod" :items="communicationMethods" :rules="caseRules" label="Select Communication Methods *" required variant="outlined"></v-select>
                                     </v-col>
                                 </v-row>
 
                                 <v-row>
                                     <v-col cols="12" md="6">
-                                        <v-text-field v-model="systemname" label="System/ERP Name" :rules="nameRules" requireed variant="outlined"></v-text-field>
+                                        <v-text-field v-model="systemname" label="System/ERP Name *" :rules="systemRules" requireed variant="outlined"></v-text-field>
                                     </v-col>
                                 </v-row>
 
                                 <h3>Services:</h3><br />
-                                <v-select v-model="selectedService" :items="allservices" :rules = "servicesRules" label="Select Service" required variant="outlined"></v-select>
+                                <v-select v-model="selectedService" :items="allservices" :rules = "caseRules" label="Select Service *" required variant="outlined"></v-select>
                                 
                                 <div v-if="selectedService">
 
-                                    <carrier-services v-if="selectedService === 'Carrier Services'" :selectedService="selectedService" :carrierServiceOptions="serviceOptions.carrierServiceOptions" @carrierServiceSubmitted="handleCarrierServiceSubmitted" />
+                                    <div v-if="selectedService === 'Carrier Services'">
+                                        <v-select v-model="labelAndAWBOrder" :rules="caseRules" required :items="carrierServiceOptions.labelAndAWBOrderOptions" label="Generate Label & AWB/Order *" outlined></v-select>
+                                        <v-select v-model="trackingEvents" :rules="caseRules" required :items="carrierServiceOptions.trackingEventsOptions" label="Tracking Events *" outlined></v-select>
                                     
-                                    <v-select v-if="selectedService === 'GPS/ELD Telematics Services'" v-model="gpsServices" :rules = "gpsRules" :items="gpsServiceOptions.gpsServicesOptions" label="GPS/ELD Telematics Services" outlined></v-select>
+                                        <v-radio-group v-model="cancelawb" :rules="caseRules" required inline>
+                                            <span class="get-slot-label">Cancel AWB * :</span>
+                                            <div class="radio_class"><v-radio label="Yes" value="yes"></v-radio>
+                                                                     <v-radio label="No" value="no"></v-radio></div>
+                                        </v-radio-group>
                                     
-                                    <v-select v-if="selectedService === 'OMS/ERP/WMS Services'" v-model="omsServices" :rules = "omsRules" :items="omsServiceOptions.omsServicesOptions" label="OMS/ERP/WMS Services" multiple outlined ></v-select>
+                                        <v-radio-group v-model="getquote" :rules="caseRules" required inline>
+                                            <span class="get-slot-label">Get quote * :</span>
+                                            <div class="radio_class"><v-radio label="Yes" value="yes"></v-radio>
+                                                                    <v-radio label="No" value="no"></v-radio></div>
+                                        </v-radio-group>
                                     
-                                    <v-select v-if="selectedService === 'Other Services'" v-model="otherServices" :rules = "otherRules" :items="otherServiceOptions.otherServicesOptions" label="Other Services" outlined></v-select>
+                                        <v-radio-group v-model="getslot" :rules="caseRules" required inline>
+                                        <span class="get-slot-label">Get Slot * :</span>
+                                        <div class="radio_class"><v-radio label="Yes" value="yes"></v-radio>
+                                                                <v-radio label="No" value="no"></v-radio></div>
+                                        </v-radio-group>
+                                    
+                                        <v-radio-group v-model="confirmslot" :rules="caseRules" required inline > 
+                                        <span class="get-slot-label">Confirm Slot * :</span>
+                                        <div class="radio_class"><v-radio label="Yes" value="yes"></v-radio>
+                                                                <v-radio label="No" value="no"></v-radio></div>
+                                        </v-radio-group>
+                                    </div>
+
+
+                                    <v-select v-if="selectedService === 'GPS/ELD Telematics Services'" v-model="gpsServices" :rules = "caseRules" :items="gpsServiceOptions.gpsServicesOptions" label="GPS/ELD Telematics Services *" outlined></v-select>
+                                    
+                                    <v-select v-if="selectedService === 'OMS/ERP/WMS Services'" v-model="omsServices" :rules = "caseRules" :items="omsServiceOptions.omsServicesOptions" label="OMS/ERP/WMS Services *" multiple outlined ></v-select>
+                                    
+                                    <v-select v-if="selectedService === 'Other Services'" v-model="otherServices" :rules = "caseRules" :items="otherServiceOptions.otherServicesOptions" label="Other Services *" outlined></v-select>
                                 </div>
 
                                 <br />
                                 <v-row>
                                     <v-col cols="12" md="6">
-                                        <v-select v-model="dataexchange" :items="dataExchangeOptions" label="Data Exchange Format" variant="outlined"></v-select>
+                                        <v-select v-model="dataexchange" :items="dataExchangeOptions" label="Data Exchange Format *" required :rules = "caseRules" variant="outlined"></v-select>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-text-field v-model="doclink" label="Documentation Link" :rules="docRules" variant="outlined"></v-text-field>
+                                        <v-text-field v-model="doclink" label="Documentation Link * " required :rules="caseRules" variant="outlined"></v-text-field>
                                     </v-col>
                                 </v-row>
 
                                 <v-row>
                                     <v-col v-if="selectedService === 'Carrier Services'">
-                                        <v-file-input  v-model="carrierStatusList" variant="underlined" :rules="carrierlistRules" accept=".xls,.xlsx,.ods,.csv" label="Carrier Status List" @change="handleFileSelection($event, uploadedFiles)"></v-file-input>
+                                        <v-file-input  v-model="carrierStatusList" variant="underlined" :rules="carrierlistRules" required accept=".xls,.xlsx,.ods,.csv" label="Carrier Status List *" @change="handleFileSelection($event, uploadedFiles)"></v-file-input>
                                         <small>Kindly provide the carrier status list and also provide the Final or Last status of tracking to stop pulling the tracking updates.</small>
                                     </v-col>
                                 </v-row>
 
                                 <v-row>
                                     <v-col cols="12" md="6">
-                                        <v-file-input v-model="requestfile" label="Request Body/Payload" :rules="requestRules" variant="underlined" required multiple @change="handleFileUpload($event, 'requestfiles')"></v-file-input>
+                                        <v-file-input v-model="requestfile" label="Request Body/Payload *" :rules="requestRules" variant="underlined" required multiple @change="handleFileUpload($event, 'requestfiles')"></v-file-input>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-file-input v-model="samplefile" label="Sample Response Body/Payload" variant="underlined" :rules = "sampleRules" required multiple @change="handleFileUpload($event, 'samplefiles')"></v-file-input>
+                                        <v-file-input v-model="samplefile" label="Sample Response Body/Payload *" variant="underlined" :rules = "requestRules" required multiple @change="handleFileUpload($event, 'samplefiles')"></v-file-input>
                                     </v-col>
                                 </v-row>
 
                             </v-container>
                             <v-card-actions class="button-container">
-                                <v-btn :disabled="!valid" @click="submitForm" color="primary" dark>Next</v-btn>
+                                <v-btn :disabled="!valid" @click="submitForm()" color="primary" dark>Next</v-btn>
                                 <v-btn @click="clearForm" color="red" dark>Clear</v-btn>
                             </v-card-actions>
                         </v-form>
@@ -90,100 +118,58 @@ import data from '../assets/data.json';
 
 import * as XLSX from 'xlsx';
 
-import CarrierServices from "../components/CarrierServices.vue";
-
 import axios from 'axios';
 
 
 export default {
 
-    components: {
-        CarrierServices
-    },
-
     data() {
         return {
-            data: null,
-            allservices: [],
-
-            summary: null,
-            summaryRules: [
-                (v) => !!v || 'Summary is required',
-            ],
-
-
-            IssueKey: "",
-
-            issuekey: "",
-            issueRules: [
-                (v) => !!v || 'Issue Key is required',
-            ],
-
+            IssueKey: null,
 
             askusecase: null,
             caseRules: [
-                (v) => !!v || 'Ask/Use Case is required',
+                (v) => !!v || 'This Field is required',
             ],
-
 
             communicationmethod: null,
             communicationMethods: [],
-            communicationMethodRules: [
-                (v) => !!v || 'Communication Method is required',
-            ],
 
+            summary: null,
 
             systemname: null,
-            nameRules: [
-                (v) => !!v || 'System Name is required',
-            ],
-
 
             selectedService: null,
-            servicesRules: [
-                (v) => !!v || 'Service is required',
-            ],
-
 
             carrierServiceData: null,
+            carrierservices: null,
             carrierServiceOptions: {
                 labelAndAWBOrderOptions: [],
                 trackingEventsOptions: [],
             },
-            carrierservices: null,
 
+            labelAndAWBOrder : null,          //sub parts of CARRIER SERVICES
+            trackingEvents : null,
+            cancelawb : null,
+            getquote : null,
+            getslot : null,
+            confirmslot : null,
 
-            gpsServiceOptions: [],
             gpsServices: null,
-            gpsRules: [
-                (v) => !!v || 'This field is required',
-            ],
+            gpsServiceOptions: [],
 
-
-            omsServiceOptions: [],
             omsServices: null,
-            omsRules: [
-                (v) => !!v || 'This field is required',
-            ],
+            omsServiceOptions: [],
 
-
-            otherServiceOptions: [],
             otherServices: null,
-            otherRules: [
-                (v) => !!v || 'This field is required',
-            ],
-
+            otherServiceOptions: [],
 
             dataexchange: null,
             dataExchangeOptions: [],
 
+            doclink: null,
 
-            doclink: "",
-            docRules: [
-                (v) => !!v || 'Document Link is required',
-            ],
-
-            uploadedFiles: null,
+            uploadedFiles: [],
             carrierStatusList:[],
             carrierlistRules: [
                 (v) => !!v || 'This field is required',
@@ -201,29 +187,17 @@ export default {
                 },
             ],
 
-
             samplefile: [],
             samplefiles: [],
-            sampleRules:[
-            (value) => {
-                if (!value || !value.length) {
-                    return 'This field is required';
-                } else {
-                    return true;
-                }
-            },
-            ],
 
+            finalEmail : '',
+
+            data: null,
+            allservices: [],
 
             valid: false,
 
-
             submitted: false,
-
-            file: null,
-            errorSnackbar: false,
-            errorMessage: "",
-
         };
     },
 
@@ -241,13 +215,15 @@ export default {
 
 
     async mounted() {
-
+        this.email();
+        this.issueKey();
+        await this.fetchIssuesDetails();
         
         try {
             this.data = data.data;
-            this.allservices = this.data.allservices;
             this.issueTypes = this.data.issueTypes;
             this.communicationMethods = this.data.communicationMethods;
+            this.allservices = this.data.allservices;
             this.serviceOptions = this.data.serviceOptions;
             this.carrierServiceOptions = this.data.serviceOptions.carrierServiceOptions;
             this.gpsServiceOptions = this.data.serviceOptions.gpsServiceOptions;
@@ -266,27 +242,41 @@ export default {
         }
         
         
-        this.issuekey = this.$route.query.issueKey;
-        console.log(this.issuekey); 
-
-        this.IssueKey = this.issuekey;
-        console.log(this.IssueKey);
+        // this.issueKey = this.$route.query.issueKey;
+        // console.log(this.issueKey); 
         
-        const storedFormData = localStorage.getItem('formData');
-        if (storedFormData) {
-            const formData = JSON.parse(storedFormData);
-            Object.assign(this, formData);
-        }   
+        const storedcompleteData = localStorage.getItem('completeData')
+        console.log(storedcompleteData)
 
-        await this.fetchIssuesDetails();
+        if(storedcompleteData){
+            const completeData = JSON.parse(storedcompleteData);
+            Object.assign(this, completeData);
+        }
     },
 
     methods: {
+        issueKey(){
+            this.IssueKey = this.$root.issueKey;
+            console.log(this.IssueKey);
+            return this.$root.issueKey;
+        },
+        email() {
+            const mail = this.$root.email;
+            if (!mail) {
+                alert("Invalid email. Please try again.");
+                this.$router.push('/');
+                return;
+            }
+
+            this.finalEmail = mail;
+            console.log(this.finalEmail);
+            return this.$root.email;
+        },
 
         async fetchIssuesDetails() {
             const url = "https://api-qa.fareyeconnect.com/connector/v1/formtest/get-issue-details";
             try {
-                const response = await axios.post(url,  {IssueKey :this.IssueKey}, {
+                const response = await axios.post(url,  {IssueKey : this.IssueKey}, {
                     headers: {
                         'Authorization': 'Bearer 39e89e75-5f22-4f26-abc8-145592eb3577'
                     }
@@ -296,21 +286,22 @@ export default {
                 this.askusecase = jsonData.askusecase;
                 this.communicationmethod = jsonData.communicationmethod;
                 this.systemname = jsonData.systemname;
-                this.dataexchange = jsonData.dataexchange;
-                this.doclink = jsonData.doclink;
-                this.requestfiles = jsonData.requestfile;
-                this.samplefiles = jsonData.samplefile;
-                
-                // this.selectedService = jsonData.selectedService;
-
-
-                this.otherServices = (jsonData.otherservices === "NA") ? null : jsonData.otherServices,
-
-
+                this.selectedService = jsonData.selectedService;
                 this.carrierservices = jsonData.carrierservices;
+                this.labelAndAWBOrder = jsonData.carrierservices.labelAndAWBOrder;
+                this.trackingEvents = jsonData.carrierservices.trackingEvents;
+                this.cancelawb = jsonData.carrierservices.cancelawb;
+                this.getquote = jsonData.carrierservices.getquote;
+                this.getslot = jsonData.carrierservices.getslot;
+                this.confirmslot = jsonData.carrierservices.confirmslot;
                 this.gpsServices = jsonData.gpsservices;
                 this.omsServices = jsonData.omsservices;
-                // this.otherServices = jsonData.otherservices;
+                this.otherServices = jsonData.otherServices,
+                this.dataexchange = jsonData.dataexchange;
+                this.doclink = jsonData.doclink;
+                this.uploadedFiles = jsonData.carrierStatusList;
+                this.requestfiles = jsonData.requestfile;
+                this.samplefiles = jsonData.samplefile;
                 
                 console.log("Response from server:", response);
 
@@ -370,19 +361,18 @@ export default {
             }
         },
 
-        handleCarrierServiceSubmitted(carrierServiceData) {
-            this.carrierservices = carrierServiceData;
-        },
-
         clearForm() {
-            this.issuekey = null;
-            this.issuetype = null;
-            this.summary = null;
             this.askusecase = null;
             this.communicationmethod = null;
             this.systemname = null;
             this.selectedService = null;
             this.carrierservices = null;
+            this.labelAndAWBOrder = null;
+            this.trackingEvents = null;
+            this.getslot = null;
+            this.getquote = null;
+            this.confirmslot = null;
+            this.cancelawb = null;
             this.otherServices = null;
             this.gpsServices = null;
             this.omsServices = null;
@@ -393,50 +383,76 @@ export default {
             this.samplefiles = [];
             this.requestfiles= [];
             this.requestfile = [];
-            this.carrierStatusList = null;
-            localStorage.removeItem('formData');
+            this.carrierStatusList = [];
+            localStorage.removeItem('completeData');
         },
 
         async submitForm() {
             try {
                 const isValid = await this.$refs.form.validate();
+
+                this.carrierServiceData = {
+                    labelAndAWBOrder: (this.labelAndAWBOrder === null || this.labelAndAWBOrder === undefined) ? "NA" : this.labelAndAWBOrder,
+                    trackingEvents: (this.trackingEvents === null || this.trackingEvents === undefined) ? "NA" : this.trackingEvents,
+                    cancelawb: (this.cancelawb === null || this.cancelawb === undefined) ? "NA" : this.cancelawb,
+                    getquote: (this.getquote === null || this.getquote === undefined) ? "NA" : this.getquote,
+                    getslot: (this.getslot === null || this.getslot === undefined) ? "NA" : this.getslot,
+                    confirmslot: (this.confirmslot === null || this.confirmslot === undefined) ? "NA" : this.confirmslot,
+                }
+
                 if (isValid) {
                     console.log("Form submitted");
                     this.submitted = true;
                 }
 
-                const formData = {
-                    issuekey: (this.issuekey === null || this.issuekey === undefined) ? "NA" : this.issuekey,
-
+                const completeData = {
+                    issuekey : this.IssueKey,
                     askusecase: this.askusecase,
                     communicationmethod: this.communicationmethod,
                     systemname: this.systemname,
                     selectedService:this.selectedService,
-                    carrierservices: (this.carrierservices === null || this.carrierservices === undefined) ? "NA" : this.carrierservices,
-
+                    carrierservices: (this.carrierServiceData === null || this.carrierServiceData === undefined) ? "NA" : this.carrierServiceData,
+                    labelAndAWBOrder: (this.labelAndAWBOrder === null || this.labelAndAWBOrder === undefined) ? "NA" : this.labelAndAWBOrder,
+                    trackingEvents: (this.trackingEvents === null || this.trackingEvents === undefined) ? "NA" : this.trackingEvents,
+                    cancelawb: (this.cancelawb === null || this.cancelawb === undefined) ? "NA" : this.cancelawb,
+                    getquote: (this.getquote === null || this.getquote === undefined) ? "NA" : this.getquote,
+                    getslot: (this.getslot === null || this.getslot === undefined) ? "NA" : this.getslot,
+                    confirmslot: (this.confirmslot === null || this.confirmslot === undefined) ? "NA" : this.confirmslot,
                     otherServices: (this.otherServices === null || this.otherServices === undefined) ? "NA" : this.otherServices,
-
                     gpsServices: (this.gpsServices === null || this.gpsServices === undefined) ? "NA" : this.gpsServices,
-
                     omsServices: (this.omsServices === null || this.omsServices === undefined) ? "NA" : this.omsServices,
-
                     requestfile: this.requestfiles, 
                     samplefile: this.samplefiles,
                     carrierStatusList: (this.uploadedFiles === null || this.uploadedFiles === undefined) ? "NA" : this.uploadedFiles,
+                    dataexchange: this.dataexchange,
+                    doclink: this.doclink,
+                };
 
+                const formData = {
+
+                    issuekey : this.IssueKey,
+                    askusecase: this.askusecase,
+                    communicationmethod: this.communicationmethod,
+                    systemname: this.systemname,
+                    selectedService:this.selectedService,
+                    carrierservices: (this.carrierServiceData === null || this.carrierServiceData === undefined) ? "NA" : this.carrierServiceData,
+                    otherServices: (this.otherServices === null || this.otherServices === undefined) ? "NA" : this.otherServices,
+                    gpsServices: (this.gpsServices === null || this.gpsServices === undefined) ? "NA" : this.gpsServices,
+                    omsServices: (this.omsServices === null || this.omsServices === undefined) ? "NA" : this.omsServices,
+                    requestfile: this.requestfiles, 
+                    samplefile: this.samplefiles,
+                    carrierStatusList: (this.uploadedFiles === null || this.uploadedFiles === undefined) ? "NA" : this.uploadedFiles,
                     dataexchange: this.dataexchange,
                     doclink: this.doclink,
                 };
 
                 if (isValid) {
-                    localStorage.setItem('formData', JSON.stringify(formData));
-                    console.log(formData);
-                    console.log(this.samplefile);
-                    console.log(this.requestfile);
+                    this.$root.formData = formData;
+                    this.$root.issueKey = this.IssueKey;
+                    this.$root.email = this.finalEmail;
 
-                    this.$router.push({
-                        name: 'updateTable',
-                    });
+                    this.$router.push({ name: 'updateTable' });
+                    console.log(completeData);
                 }else {
                     console.log("Validation failed");
                     alert('Please fill all required fields');

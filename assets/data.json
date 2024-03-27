@@ -85,6 +85,9 @@
             }
         },
         "keyMap": {
+            "issuekey" : "Issue Key",
+            "issuetype": "Issue Type",
+            "summary" : " Summary",
             "askusecase": "Ask/Use Case",
             "communicationmethod": "Communication Method",
             "systemname": "System/ERP Name",
@@ -98,7 +101,23 @@
             "doclink": "Documentation Link",
             "samplefile": "Sample Response Body/Payload",
             "requestfile": "Request Body/Payload",
-            "requestFileContent": "Request File Content"
+            "requestFileContent": "Request File Content",
+
+
+
+            "code" : "Code",
+            "name" : "Name",
+            "contact_person" : "Contact Person",
+            "courier_email" : "Courier Email",
+            "final_status" : "Final Status",
+            "feature" : "Feature",
+            "logo" : "Logo",
+            "label" : "Label",
+            "modality" : "Modality",
+            "status" : "Status",
+            "domain" : "Domain",
+            "country_name" : "Country Name",
+            "country_id" : "Country ID"
         },
 
 
